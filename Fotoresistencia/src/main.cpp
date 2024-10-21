@@ -6,7 +6,7 @@ Santiago Quintana Moreno A01571222
 
 Equipo #1: “Null”
 Javier Santos Pérez A01198909
-Alejandro Orta Rodríguez A00840490  (Encargado asignado del sensor, no contribuyó)    
+Alejandro Orta Rodríguez A00840490  (Encargado asignado del sensor, por problemas de fuerza mayor no pudo contribuir)
 Irvin David Ornelas García A00839065
 */
 
