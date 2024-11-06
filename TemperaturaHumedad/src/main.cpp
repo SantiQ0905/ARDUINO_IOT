@@ -2,7 +2,7 @@
 PROGRAMA DE CONTROL DE SENSOR DE TEMPERATURA Y HUMEDAD USANDO ESP8266.
 
 Autor: 
-Javier Santos Pérez A01198909
+Javier Santos Pérez A01198909 & Santiago Quintana Moreno A01571222
 
 Equipo #1: “Null”
 Irvin David Ornelas García A00839065
@@ -19,10 +19,10 @@ Santiago Quintana Moreno A01571222
 #define DHTTYPE   DHT11
 DHT dht(DHTPIN, DHTTYPE);
 
-const char* ssid = "Verizon LM-F100 AA1E";
-const char* password = "a!2ee(4W";
+const char* ssid = "INFINITUM8B9C_2.4";
+const char* password = "f54cBnRD7e";
 
-String URL = "http://192.168.0.29:3000/iot/api/insertTemperature";
+String URL = "http://192.168.1.194:3000/iot/api/insertTemperature";
 
 void logIntento(float t, float h);  // Updated function declaration
 
