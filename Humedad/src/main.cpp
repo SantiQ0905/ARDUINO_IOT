@@ -10,24 +10,32 @@ Alejandro Orta Rodríguez A00840490
 Santiago Quintana Moreno A01571222      
 */
 
-#include <Arduino.h> // Incluye la librería principal de Arduino.
-#include <ESP8266WiFi.h> // Incluye la librería de ESP8266 para conexión WiFi.
-#include <ESP8266HTTPClient.h> // Incluye la librería de ESP8266 para realizar peticiones HTTP.
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
 
-int sensor = A0; // Declara una variable entera llamada 'sensor' y la asigna al pin analógico A0.
 
-const char* ssid = "INFINITUM8B9C_2.4";
-const char* password = "f54cBnRD7e";
+const char* ssid = "IZZI-AAE0";
+const char* password = "AIzzi21JORNB.!";
 
-String URL = "http://192.168.1.194:3000/insertSoilMoistureLog";
+const int sensor_ID = 2;
+const int plant_ID = 1;
 
-void logIntento(int humedad);
+const int sensor = A0;
 
-// Función 'setup' que se ejecuta una vez al inicio cuando se enciende o reinicia el microcontrolador.
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org");
+
+String URL = "http://192.168.1.11:3000/iot/api/insertSoilMoisture";
+
+
 void setup() {
   Serial.begin(9600); 
   Serial.println("***Inicializando conexión a My SQL***");
   
+  pinMode(A0,INPUT);
+
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
   delay(100);
@@ -42,34 +50,57 @@ void setup() {
   }
   Serial.print("\nConectado! IP: ");
   Serial.println(WiFi.localIP());
+
+  timeClient.begin();
+
   delay(500);
 }
 
 void loop() {
-  int humedad = analogRead(sensor);  
+    int humedad = map(analogRead(sensor), 0, 1024, 100, 0);
 
-  if (isnan(humedad)) {
-    Serial.println("Error al leer el sensor de humedad!");
-    return;
-  }
+    if (isnan(humedad)) {
+      Serial.println("Error obteniendo los datos del sensor");
+      return;
+    }
 
-  Serial.println(humedad); 
-  
-  logIntento(humedad);
-  
-  delay(1000); 
+    unsigned long unixTime = getTime();
+
+    if(isnan(unixTime)) {
+      Serial.println("Error obteniendo la fecha del servidor");
+      return;
+    }
+
+    Serial.print("\nHumedad: ");
+    Serial.print(humedad);
+    Serial.print(" %");
+
+    Serial.print("\nUnixTime: ");
+    Serial.print(unixTime);
+
+    logIntento(humedad,unixTime);
+      
+    delay(10000);
 }
 
-void logIntento(int humedad) {
-  if (WiFi.status() == WL_CONNECTED){
+void logIntento(float humedad, unsigned long unixTime) {
+  if (WiFi.status() == WL_CONNECTED) {
     WiFiClient wClient;
     HTTPClient httpClient;
 
-    String jsonPayload = "{\"humedad\":" + String(humedad) + "}";
+
+    // Crear el JSON a enviar
+    String jsonPayload = String("{") +
+                    "\"ID_EHSensor\": " + String(sensor_ID) + ", " +
+                    "\"ID_Plant\": " + String(plant_ID) + ", " +
+                    "\"Value\": " + String(humedad) + ", " +
+                    "\"Date\": " + String(unixTime) +
+                    "}";
+
     Serial.println("Payload JSON: " + jsonPayload);
     Serial.print("Conectando a URL: ");
     Serial.println(URL);
-    
+
     // Inicia la conexión
     httpClient.begin(wClient, URL);
     httpClient.addHeader("Content-Type", "application/json");
@@ -95,12 +126,14 @@ void logIntento(int humedad) {
     httpClient.end(); 
   } else {
     Serial.println("Error: No está conectado a WiFi. Intentando reconectar...");
-    WiFi.disconnect();
-    WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(1000);
-      Serial.print(".");
-    }
-    Serial.println("\nReconectado a WiFi.");
+    WiFi.reconnect();
+    delay(5000);
   }
 }
+
+unsigned long getTime() {
+  timeClient.update();
+  unsigned long now = timeClient.getEpochTime();
+  return now;
+}
+
