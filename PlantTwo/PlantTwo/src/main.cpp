@@ -23,15 +23,13 @@ Javier Santos Pérez A01198909
 const char* ssid = "QUINTANA_MORENO";
 const char* password = "SaSaVEQM9928";
 
-
-
 // Sensor IDs
 const int ID_TSensor = 1;
 const int ID_LSensor = 3;
 const int ID_EHSensor = 4;
 
 // Plant ID
-const int ID_Plant = 2;
+const int ID_Plant = 1;
 
 // Pin Definitions
 #define DHTPIN 0               // D3 -> GPIO0
@@ -42,15 +40,10 @@ const int ID_Plant = 2;
 #define PHOTORESISTOR_CHANNEL 1
 #define SOIL_MOISTURE_CHANNEL 2
 
-// Variables for wind speed calculation
-float zeroWindVoltage = 0.04;
-float voltagePerkph = 0.1;
-
 // Sensor Instances
 DHT dht(DHTPIN, DHTTYPE);
 Adafruit_ADS1115 ads;
 Servo servo;
-
 
 void sendDataToServer(String url, String payload, HTTPClient &httpClient, WiFiClient &wClient) {
   httpClient.begin(wClient, url);
@@ -81,28 +74,26 @@ void logIntento(float t, float h, float lightVoltage, int soilMoisture) {
                               ", \"ID_Plant\": " + String(ID_Plant) +
                               ", \"Value1\": " + String(t) +
                               ", \"Value2\": " + String(h) + "}";
-    String urlTempHumidity = "http://192.168.86.31:3000/iot/api/insertTemperature";
+    String urlTempHumidity = "http://192.168.1.80:3000/iot/api/insertTemperature";
     sendDataToServer(urlTempHumidity, jsonTempHumidity, httpClient, wClient);
 
     // Log light sensor
     String jsonLight = "{\"ID_LSensor\": " + String(ID_LSensor) +
                        ", \"ID_Plant\": " + String(ID_Plant) +
                        ", \"Value\": " + String(lightVoltage) + "}";
-    String urlLight = "http://192.168.86.31:3000/iot/api/insertLight";
+    String urlLight = "http://192.168.1.80:3000/iot/api/insertLight";
     sendDataToServer(urlLight, jsonLight, httpClient, wClient);
 
     // Log soil moisture
     String jsonSoil = "{\"ID_EHSensor\": " + String(ID_EHSensor) +
                       ", \"ID_Plant\": " + String(ID_Plant) +
                       ", \"Value\": " + String(soilMoisture) + "}";
-    String urlSoil = "http://192.168.86.31:3000/iot/api/insertSoilMoisture";
+    String urlSoil = "http://192.168.1.80:3000/iot/api/insertSoilMoisture";
     sendDataToServer(urlSoil, jsonSoil, httpClient, wClient);
   } else {
     Serial.println("Error: No está conectado a WiFi.");
   }
 }
-
-
 
 void setup() {
   Serial.begin(115200);

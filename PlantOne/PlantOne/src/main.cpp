@@ -83,28 +83,28 @@ void logIntento(float t, float h, float windSpeedkph, float lightVoltage, int so
                               ", \"ID_Plant\": " + String(ID_Plant) +
                               ", \"Value1\": " + String(t) +
                               ", \"Value2\": " + String(h) + "}";
-    String urlTempHumidity = "http://192.168.86.31:3000/iot/api/insertTemperature";
+    String urlTempHumidity = "http://192.168.1.80:3000/iot/api/insertTemperature";
     sendDataToServer(urlTempHumidity, jsonTempHumidity, httpClient, wClient);
 
     // Log wind speed
     String jsonWind = "{\"ID_ASensor\": " + String(ID_ASensor) +
                       ", \"ID_Plant\": " + String(ID_Plant) +
                       ", \"Value\": " + String(windSpeedkph) + "}";
-    String urlWind = "http://192.168.86.31:3000/iot/api/insertAnemometer";
+    String urlWind = "http://192.168.1.80:3000/iot/api/insertAnemometer";
     sendDataToServer(urlWind, jsonWind, httpClient, wClient);
 
     // Log light sensor
     String jsonLight = "{\"ID_LSensor\": " + String(ID_LSensor) +
                        ", \"ID_Plant\": " + String(ID_Plant) +
                        ", \"Value\": " + String(lightVoltage) + "}";
-    String urlLight = "http://192.168.86.31:3000/iot/api/insertLight";
+    String urlLight = "http://192.168.1.80:3000/iot/api/insertLight";
     sendDataToServer(urlLight, jsonLight, httpClient, wClient);
 
     // Log soil moisture
     String jsonSoil = "{\"ID_EHSensor\": " + String(ID_EHSensor) +
                       ", \"ID_Plant\": " + String(ID_Plant) +
                       ", \"Value\": " + String(soilMoisture) + "}";
-    String urlSoil = "http://192.168.86.31:3000/iot/api/insertSoilMoisture";
+    String urlSoil = "http://192.168.1.80:3000/iot/api/insertSoilMoisture";
     sendDataToServer(urlSoil, jsonSoil, httpClient, wClient);
   } else {
     Serial.println("Error: No está conectado a WiFi.");
