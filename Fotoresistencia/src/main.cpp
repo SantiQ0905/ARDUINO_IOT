@@ -16,16 +16,19 @@ Irvin David Ornelas García A00839065
 #include <WiFiUdp.h>
 #include <NTPClient.h>
 
-const char* ssid = "INFINITUM8B9C_2.4";
-const char* password = "f54cBnRD7e";
+//const char* ssid = "INFINITUM8B9C_2.4";
+//const char* password = "f54cBnRD7e";
 
-const int ID_LSensor = 4;
+const char* ssid = "HUAWEI Y9s";
+const char* password = "sukira893";
+
+const int ID_LSensor = 1;
 const int ID_Plant = 1;
 
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org", 0, 60000);
 
-String URL = "http://192.168.1.194:3000/iot/api/insertLight";
+String URL = "http://192.168.166.29:3000/iot/api/insertLight";
 
 void logIntento(float voltage, String formattedDate);
 String formatDateTime(unsigned long unixTime);
